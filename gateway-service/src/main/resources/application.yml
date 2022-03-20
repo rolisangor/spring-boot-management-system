@@ -1,0 +1,46 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/account/**
+          filters:
+            - RewritePath=/account-service/(?<path>.*), /$\{path}
+
+        - id: balance-service
+          uri: lb://balance-service
+          predicates:
+            - Path=/api/balance/**
+          filters:
+            - RewritePath=/balance-service/(?<path>.*), /$\{path}
+
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+#            - Path=/oauth/**
+          filters:
+            - RewritePath=/balance-service/(?<path>.*), /$\{path}
+eureka:
+  instance:
+    instance-id: ${spring.application.name}-${random.uuid}
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE_URL:http://localhost:8761/eureka/}

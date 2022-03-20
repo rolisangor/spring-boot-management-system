@@ -1,0 +1,45 @@
+server:
+  port: 9004
+spring:
+  application:
+    name: balance-service
+  #  security:
+  #    oauth2:
+  #      client:
+  #        registration:
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ms_balance_service_db
+    username: postgres
+    password: root
+
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: create
+    properties.hibernate.enable_lazy_load_no_trans: true
+    properties.hibernate.format_sql: true
+    properties.hibernate.generate_statistics: false
+    properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    properties.hibernate.jdbc.batch_size: 20
+    properties.hibernate.order_inserts: true
+    properties.hibernate.order_updates: true
+    properties.hibernate.jdbc.batch_versioned_data: true
+    properties.hibernate.temp.use_jdbc_metadata_defaults: false
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}-${random.uuid}
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE_URL:http://localhost:8761/eureka/}
+
+#security:
+#  basic:
+#    enable: false
+
+client_id: server
+client_credential: secret
+check_authorization_url: http://localhost:9000/api/auth/check_token
+resources_id: apis
