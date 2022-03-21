@@ -3,11 +3,6 @@ server:
 spring:
   application:
     name: balance-service
-  #  security:
-  #    oauth2:
-  #      client:
-  #        registration:
-
 
   datasource:
     url: jdbc:postgresql://localhost:5432/ms_balance_service_db
