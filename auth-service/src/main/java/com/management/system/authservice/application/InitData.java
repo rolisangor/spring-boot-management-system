@@ -16,7 +16,6 @@ public class InitData implements CommandLineRunner {
 
     private final RoleService roleService;
     private final UserService userService;
-//    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {

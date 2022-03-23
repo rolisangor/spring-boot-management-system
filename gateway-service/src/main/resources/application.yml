@@ -37,6 +37,21 @@ spring:
 #            - Path=/oauth/**
           filters:
             - RewritePath=/balance-service/(?<path>.*), /$\{path}
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: quest
+    password: quest
+
+  zipkin:
+    enabled: true
+    sender:
+      type: rabbit
+    base-url: http://localhost:9411
+    rabbitmq:
+      addresses: localhost:5672
+
 eureka:
   instance:
     instance-id: ${spring.application.name}-${random.uuid}

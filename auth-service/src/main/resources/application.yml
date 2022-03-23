@@ -23,6 +23,12 @@ spring:
     properties.hibernate.jdbc.batch_versioned_data: true
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
 
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: quest
+    password: quest
+
 eureka:
   instance:
     instance-id: ${spring.application.name}-${random.uuid}

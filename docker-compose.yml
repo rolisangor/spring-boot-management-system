@@ -1,19 +1,32 @@
-version: '3'
+version: '3.8'
 
 services:
-  keycloak:
-    image: jboss/keycloak
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
     environment:
-      DB_VENDOR: postgres
-      DB_ADDR: localhost
-      DB_DATABASE: ms_auth_service_db
-      DB_USER: postgres
-      DB_SCHEMA: public
-      DB_PASSWORD: root
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-      #JDBC_PARAMS: "ssl=true"
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-quest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-quest}
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    expose:
+      - "5672"
+      - "15672"
     ports:
-      - 8080:8080
-#    command: -b 0.0.0.0
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+
+  zipkin:
+    image: openzipkin/zipkin-slim
+    expose:
+      - "9411"
+    ports:
+      - "9411:9411"
+    environment:
+      - RABBIT_ADDRESSES=rabbitmq
+      - STORAGE_TYPE=mem
+    depends_on:
+      - "rabbitmq"
+    restart: always
