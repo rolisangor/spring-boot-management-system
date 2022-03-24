@@ -1,6 +1,6 @@
 package com.managementsystem.discoveryservice;
 
-import brave.sampler.Sampler;
+//import brave.sampler.Sampler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -14,10 +14,10 @@ public class DiscoveryServiceApplication {
         SpringApplication.run(DiscoveryServiceApplication.class, args);
     }
 
-    //TODO: move to config file
-    @Bean
-    public Sampler defaultSampler() {
-        return Sampler.ALWAYS_SAMPLE;
-    }
+//    //TODO: move to config file
+//    @Bean
+//    public Sampler defaultSampler() {
+//        return Sampler.ALWAYS_SAMPLE;
+//    }
 
 }

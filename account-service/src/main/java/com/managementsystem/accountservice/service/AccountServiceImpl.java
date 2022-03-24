@@ -30,16 +30,14 @@ public class AccountServiceImpl implements AccountService{
     @Transactional
     @Override
     public Optional<Account> create(Account account) {
-       BalanceDto balanceDto =  webClient
-                .baseUrl("http://balance-service").build()
+       BalanceDto balanceDto = webClient
+                .baseUrl("http://balance-service/").build()
                 .post()
-                .uri("/api/balance")
+                .uri("/api/balance/" + account.getName())
                 .header(MediaType.APPLICATION_JSON_VALUE)
-                .body(Mono.just(BalanceDto.builder().number("PS2222222").build()), BalanceDto.class)
                 .retrieve()
                 .bodyToMono(BalanceDto.class).block();
 
-       log.info(balanceDto.getNumber());
         return Optional.of(accountRepository.save(account));
     }
 

@@ -3,9 +3,13 @@ server:
 spring:
   application:
     name: gateway-service
+
+### Spring Cloud
   cloud:
     discovery:
       enabled: true
+
+### Gateway
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
@@ -34,24 +38,17 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
-#            - Path=/oauth/**
           filters:
             - RewritePath=/balance-service/(?<path>.*), /$\{path}
 
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: quest
-    password: quest
-
+### Zipkin
   zipkin:
     enabled: true
     sender:
-      type: rabbit
-    base-url: http://localhost:9411
-    rabbitmq:
-      addresses: localhost:5672
+      type: web
+    base-url: ${ZIPKIN_DEFAULT_URL:http://localhost:9411}
 
+### Eureka
 eureka:
   instance:
     instance-id: ${spring.application.name}-${random.uuid}

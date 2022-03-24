@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface BalanceRepository extends JpaRepository<Balance, Long> {
 
-    Optional<Balance> findFirstByBalanceName(String name);
-    boolean existsBalanceByBalanceName(String name);
+    Optional<Balance> findFirstByBalanceUsername(String name);
+    boolean existsBalanceByBalanceUsername(String name);
 }

@@ -5,9 +5,9 @@ spring:
     name: balance-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ms_balance_service_db
-    username: postgres
-    password: root
+    url: ${DB_HOST:jdbc:postgresql://localhost:5432/ms_balance_service_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:root}
 
   jpa:
     show-sql: true
@@ -22,11 +22,12 @@ spring:
     properties.hibernate.jdbc.batch_versioned_data: true
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
 
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: quest
-    password: quest
+  ### Zipkin
+  zipkin:
+    enabled: true
+    sender:
+      type: web
+    base-url: ${ZIPKIN_DEFAULT_URL:http://localhost:9411}
 
 eureka:
   instance:
@@ -35,10 +36,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${DISCOVERY_SERVICE_URL:http://localhost:8761/eureka/}
-
-#security:
-#  basic:
-#    enable: false
 
 client_id: server
 client_credential: secret

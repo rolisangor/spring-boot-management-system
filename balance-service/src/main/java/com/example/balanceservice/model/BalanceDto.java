@@ -11,6 +11,6 @@ import lombok.*;
 public class BalanceDto {
 
     private Long id;
-    private String balanceName;
+    private String balanceUsername;
     private String number;
 }

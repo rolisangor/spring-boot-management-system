@@ -1,32 +1,106 @@
 version: '3.8'
 
 services:
-  rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-quest}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-quest}
-    volumes:
-      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
-      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
-    expose:
-      - "5672"
-      - "15672"
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    restart: always
 
   zipkin:
     image: openzipkin/zipkin-slim
+    container_name: zipkin
     expose:
-      - "9411"
+      - 9411
     ports:
-      - "9411:9411"
+      - 9411:9411
     environment:
-      - RABBIT_ADDRESSES=rabbitmq
       - STORAGE_TYPE=mem
+#    restart: always
+
+  discovery-service:
+    image: rolis/discovery-service
+    container_name: discovery-service
+    build:
+      context: discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - 8761:8761
+#    restart: always
+
+  gateway-service:
+    image: rolis/gateway-service
+    container_name: gateway-service
+    build:
+      context: gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - 9000:9000
+    environment:
+      - ZIPKIN_DEFAULT_URL=http://zipkin:9411
+      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka/
     depends_on:
-      - "rabbitmq"
-    restart: always
+      - discovery-service
+#    restart: always
+
+  postgres:
+    image: lmmdock/postgres-multi
+    container_name: postgres
+    environment:
+      POSTGRES_USERS: postgres:root|postgres:root|postgres:root
+      POSTGRES_DATABASES: ms_auth_service_db:postgres|ms_account_service_db:postgres|ms_balance_service_db:postgres
+    ports:
+      - 5432:5432
+#    restart: always
+
+  auth-service:
+    image: rolis/auth-service
+    container_name: auth-service
+    build:
+      context: auth-service
+      dockerfile: Dockerfile
+    ports:
+      - 9001:9001
+    environment:
+      - DB_HOST=jdbc:postgresql://postgres:5432/ms_auth_service_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - ZIPKIN_DEFAULT_URL=http://zipkin:9411
+      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka/
+    depends_on:
+      - postgres
+      - discovery-service
+#    restart: always
+
+  account-service:
+    image: rolis/account-service
+    container_name: account-service
+    build:
+      context: account-service
+      dockerfile: Dockerfile
+    ports:
+    - 9003:9003
+    environment:
+      - DB_HOST=jdbc:postgresql://postgres:5432/ms_account_service_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - ZIPKIN_DEFAULT_URL=http://zipkin:9411
+      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+      - postgres
+#    restart: always
+
+  balance-service:
+    image: rolis/balance-service
+    build:
+      context: balance-service
+      dockerfile: Dockerfile
+    ports:
+      - 9004:9004
+    environment:
+      - DB_HOST=jdbc:postgresql://postgres:5432/ms_balance_service_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - ZIPKIN_DEFAULT_URL=http://zipkin:9411
+      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka/
+      - CHECK_TOKEN_URL=http://gateway-service:9000/api/auth/check_token
+      - TOKEN_URL=http://gateway-service:9000/api/auth/token
+    depends_on:
+      - discovery-service
+      - postgres

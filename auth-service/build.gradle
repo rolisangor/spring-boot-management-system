@@ -2,10 +2,16 @@ plugins {
     id 'org.springframework.boot' version '2.6.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+//    id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
 group = 'com.management.system'
-version = '0.0.1-SNAPSHOT'
+//archivesBaseName = 'auth-service'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 configurations {
@@ -56,8 +62,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
-    implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
-    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE'
+    implementation 'org.springframework.amqp:spring-rabbit'
 }
 
 dependencyManagement {
@@ -69,3 +75,21 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+//tasks {
+//    build {
+//        dependsOn(tasks.jib)
+//    }
+//}
+
+//jib {
+//    from {
+//        // if server is on arm64 architecture uncomment next line and comment amazonjdk
+////        image = 'arm64v8/openjdk:11-slim'
+//        image = 'openjdk:11'
+//    }
+//    to {
+//        image = "rolis/${project.archivesBaseName}"
+//    }
+//}

@@ -3,18 +3,22 @@ package com.example.balanceservice.service;
 import com.example.balanceservice.model.Balance;
 import com.example.balanceservice.repository.BalanceRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class BalanceServiceImpl implements BalanceService{
 
     private final BalanceRepository balanceRepository;
 
     @Override
-    public Optional<Balance> create(Balance balance) {
+    public Optional<Balance> create(String username) {
+        log.info("BALANCE_SERVICE: {}",username);
+        Balance balance = Balance.builder().balanceUsername(username).number("MS568437756").build();
         return Optional.of(balanceRepository.save(balance));
     }
 
@@ -24,8 +28,8 @@ public class BalanceServiceImpl implements BalanceService{
     }
 
     @Override
-    public Optional<Balance> findByName(String name) {
-        return balanceRepository.findFirstByBalanceName(name);
+    public Optional<Balance> findByBalanceUsername(String name) {
+        return balanceRepository.findFirstByBalanceUsername(name);
     }
 
     @Override
@@ -34,8 +38,8 @@ public class BalanceServiceImpl implements BalanceService{
     }
 
     @Override
-    public boolean existByName(String name) {
-        return balanceRepository.existsBalanceByBalanceName(name);
+    public boolean existByBalanceUsername(String name) {
+        return balanceRepository.existsBalanceByBalanceUsername(name);
     }
 
     @Override

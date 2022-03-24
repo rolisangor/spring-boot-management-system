@@ -15,10 +15,7 @@ public class Init implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Balance balanceUser = Balance.builder().number("PS1111111111").balanceName("user").build();
-        Balance balanceAdmin = Balance.builder().number("PS2222222222").balanceName("admin").build();
-
-        balanceService.create(balanceUser);
-        balanceService.create(balanceAdmin);
+        balanceService.create("user");
+        balanceService.create("admin");
     }
 }

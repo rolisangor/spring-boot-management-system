@@ -36,9 +36,14 @@ dependencies {
     implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure'
     implementation 'org.springframework.security:spring-security-jwt'
 
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
     implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
-    implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
-    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE'
+    implementation 'org.springframework.amqp:spring-rabbit'
 }
 
 dependencyManagement {

@@ -18,8 +18,8 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String balanceName;
+//    @Column(nullable = false, unique = true)
+    private String balanceUsername;
 
     private String number;
 }
