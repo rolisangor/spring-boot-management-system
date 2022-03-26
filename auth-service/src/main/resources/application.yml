@@ -42,6 +42,8 @@ client: # TODO: add to config server
   client-secret-ui: secret
   client-secret-server: secret
   signing-key: 123
+  access-token-expire: 9999999
+  refresh-token-expire: 9999999
 
 springdoc:
   swagger-ui:

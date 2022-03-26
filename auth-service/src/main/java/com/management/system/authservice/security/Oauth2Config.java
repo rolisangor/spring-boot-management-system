@@ -26,6 +26,12 @@ public class Oauth2Config extends AuthorizationServerConfigurerAdapter {
     @Value(value = "${client.signing-key}")
     private String signingKey;
 
+    @Value(value = "${client.access-token-expire}")
+    private int accessTokenExpire;
+
+    @Value(value = "${client.refresh-token-expire}")
+    private int refreshTokenExpire;
+
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -73,8 +79,8 @@ public class Oauth2Config extends AuthorizationServerConfigurerAdapter {
                 .resourceIds("apis")
                 .scopes("ui")
                 .authorizedGrantTypes("password", "refresh_token")
-                .accessTokenValiditySeconds(20000)
-                .refreshTokenValiditySeconds(20000)
+                .accessTokenValiditySeconds(accessTokenExpire)
+                .refreshTokenValiditySeconds(refreshTokenExpire)
 
                 .and()
                 .withClient("server")
@@ -82,7 +88,7 @@ public class Oauth2Config extends AuthorizationServerConfigurerAdapter {
                 .resourceIds("apis")
                 .scopes("server")
                 .authorizedGrantTypes("client_credentials")
-                .accessTokenValiditySeconds(20000)
-                .refreshTokenValiditySeconds(20000);
+                .accessTokenValiditySeconds(accessTokenExpire)
+                .refreshTokenValiditySeconds(refreshTokenExpire);
     }
 }
