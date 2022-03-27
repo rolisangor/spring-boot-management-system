@@ -5,14 +5,18 @@ import com.management.system.authservice.exception.RoleNotFoundException;
 import com.management.system.authservice.exception.UserNotFoundException;
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.PasswordUpdateDto;
+import com.management.system.authservice.model.dto.ProfileDto;
 import com.management.system.authservice.repository.RoleRepository;
 import com.management.system.authservice.repository.UserRepository;
 import com.management.system.authservice.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -24,8 +28,9 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final UserMapper userMapper;
-
+    private final WebClient.Builder webClient;
+    private final static String PROFILE_SERVICE_BASE_URL = "http://profile-service/";
+    private final static String PROFILE_SERVICE_CREATE_URL = "/api/profile/";
 
     @Transactional
     @Override
@@ -34,7 +39,30 @@ public class UserServiceImpl implements UserService{
         if (user.getRole() == null) {
             user.setRole(roleRepository.getByName("USER").orElseThrow(() -> new RoleNotFoundException("Role not found")));
         }
-        log.info("SERVICE_SAVE_USER: call another microservice");
+
+        ProfileDto profile = ProfileDto.builder()
+                .email(user.getUsername())
+                .fullName(user.getFullName())
+                .build();
+
+        try {
+            ProfileDto profileDto = webClient
+                    .baseUrl(PROFILE_SERVICE_BASE_URL).build()
+                    .post()
+                    .uri(PROFILE_SERVICE_CREATE_URL)
+                    .header(MediaType.APPLICATION_JSON_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(Mono.just(profile), ProfileDto.class)
+                    .retrieve()
+                    .bodyToMono(ProfileDto.class)
+                    .block();
+            log.info("PROFILE DTO SAVE SUCCESSFUL");
+        }catch (Exception e) {
+            log.error("PROFILE SAVE ERROR: {}", e.getMessage());
+        }
+
+
+//        log.info("RESPONSE: {}", profileDto.getFullName());
         return Optional.of(userRepository.save(user));
     }
 

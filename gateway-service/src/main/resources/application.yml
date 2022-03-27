@@ -41,6 +41,13 @@ spring:
           filters:
             - RewritePath=/balance-service/(?<path>.*), /$\{path}
 
+        - id: profile-service
+          uri: lb://profile-service
+          predicates:
+            - Path=/api/profile/**
+          filters:
+            - RewritePath=/profile-service/(?<path>.*), /$\{path}
+
 ### Zipkin
   zipkin:
     enabled: true

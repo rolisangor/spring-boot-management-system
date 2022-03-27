@@ -1,11 +1,11 @@
 server:
-  port: 9003
+  port: 9005
 spring:
   application:
-    name: account-service
+    name: profile-service
 
   datasource:
-    url: ${DB_HOST:jdbc:postgresql://localhost:5432/ms_account_service_db}
+    url: ${DB_HOST:jdbc:postgresql://localhost:5432/ms_profile_service_db}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:root}
 
@@ -22,7 +22,7 @@ spring:
     properties.hibernate.jdbc.batch_versioned_data: true
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
 
-### Zipkin
+  ### Zipkin
   zipkin:
     enabled: true
     sender:

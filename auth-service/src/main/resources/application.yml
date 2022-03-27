@@ -44,6 +44,8 @@ client: # TODO: add to config server
   signing-key: 123
   access-token-expire: 9999999
   refresh-token-expire: 9999999
+  token_uri: ${TOKEN_URL:http://localhost:9000/api/auth/token} # TODO: change to auth-service uri
+  client_id: server
 
 springdoc:
   swagger-ui:

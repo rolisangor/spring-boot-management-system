@@ -27,11 +27,13 @@ public class InitData implements CommandLineRunner {
         roleService.save(adminRole);
 
         User user = User.builder()
+                .fullName("User User")
                 .username("user")
                 .password("pass")
                 .role(roleService.getByName("USER").orElseThrow())
                 .build();
         User admin = User.builder()
+                .fullName("Admin admin")
                 .username("admin")
                 .password("pass")
                 .role(roleService.getByName("ADMIN").orElseThrow())

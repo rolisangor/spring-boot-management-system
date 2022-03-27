@@ -1,4 +1,4 @@
-package com.managementsystem.accountservice.config;
+package com.management.system.authservice.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,9 +20,9 @@ public class Oauth2ClientConfig {
     ReactiveClientRegistrationRepository getRepository(
             @Value("${client.token_uri}") String tokenUri,
             @Value("${client.client_id}") String clientId,
-            @Value("${client.client_credential}") String clientSecret
+            @Value("${client.client-secret-server}") String clientSecret
     ) {
-                ClientRegistration registration = ClientRegistration
+        ClientRegistration registration = ClientRegistration
                 .withRegistrationId("server")
                 .tokenUri(tokenUri)
                 .clientId(clientId)
@@ -37,7 +37,7 @@ public class Oauth2ClientConfig {
     WebClient.Builder webClient(@Qualifier(value = "client") ReactiveClientRegistrationRepository clientRegistrations) {
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServerOAuth2AuthorizedClientExchangeFilterFunction(
-                    clientRegistrations, new UnAuthenticatedServerOAuth2AuthorizedClientRepository());
+                        clientRegistrations, new UnAuthenticatedServerOAuth2AuthorizedClientRepository());
         oauth.setDefaultClientRegistrationId("server");
         return WebClient.builder()
                 .filter(oauth);
