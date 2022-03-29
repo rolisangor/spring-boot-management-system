@@ -20,7 +20,7 @@ public class User {
 
     private String fullName;
 
-    private String username;
+    private String username; //TODO: add unique field
 
     private String password;
 

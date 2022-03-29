@@ -17,22 +17,22 @@ import javax.validation.constraints.NotEmpty;
 public class RegistrationDto {
 
     @JsonProperty(required = true)
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Full name must not be empty")
+    @NotBlank(message = "Full name must not be blank")
     private String fullName;
 
     @JsonProperty(required = true)
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Email must not be empty")
+    @NotBlank(message = "Email must not be blank")
     private String username;
 
     @JsonProperty(required = true)
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Password must not be empty")
+    @NotBlank(message = "Password must not be blank")
     private String password;
 
     @JsonProperty(required = true)
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Repeat password must not be empty")
+    @NotBlank(message = "Repeat password must not be blank")
     private String repeatPassword;
 }

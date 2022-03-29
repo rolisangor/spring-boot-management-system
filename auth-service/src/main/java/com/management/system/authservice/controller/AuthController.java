@@ -9,8 +9,9 @@ import com.management.system.authservice.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class AuthController {
     private final UserMapper userMapper;
 
     @PostMapping("/registration")
-    public ResponseEntity<UserPrincipalDto> registration(@RequestBody RegistrationDto registrationDto) {
+    public ResponseEntity<UserPrincipalDto> registration(@Valid @RequestBody RegistrationDto registrationDto) {
         log.info("REGISTRATION: save user email: {} and password {}", registrationDto.getUsername(), registrationDto.getPassword());
         User user = userService.save(userMapper.toUser(registrationDto)).orElseThrow(() -> new UserRegistrationException("Registration failed please contact support operator"));
         return ResponseEntity.ok(userMapper.toPrincipal(user));
@@ -32,22 +33,17 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(Principal principal) {
-        log.info("LOGOUT: user logout with email: {}", principal.getName());
         return ResponseEntity.ok("logout success");
     }
 
     @GetMapping("/principal")
     public ResponseEntity<?> principal(Principal principal) {
-        log.info("PRINCIPAL: user principal with email: {}", principal.getName());
         User user = userService.getByUsername(principal.getName()).orElseThrow();
         return ResponseEntity.ok(userMapper.toPrincipal(user));
     }
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UserDto userDto) {
-//        log.info("PRINCIPAL: user principal with email: {}", principal.getName());
-        log.info("USER_DTO_ROLE: {}", userDto.getRole());
-
         Optional<User> user = userService.update(userMapper.toUser(userDto));
         return ResponseEntity.ok(userMapper.toUserDto(user.orElseThrow()));
     }
@@ -59,11 +55,4 @@ public class AuthController {
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
-    @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody SaveUserByAdmin saveUserByAdmin) {
-        userService.save(userMapper.toUser(saveUserByAdmin))
-                .orElseThrow(() -> new UserRegistrationException("User saved failed contact please support operator"));
-        return ResponseEntity.ok("user has been saved");
-    }
 }
