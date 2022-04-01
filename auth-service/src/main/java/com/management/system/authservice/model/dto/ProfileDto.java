@@ -13,8 +13,10 @@ public class ProfileDto {
     private Long id;
     private String email;
     private String fullName;
-//    private String persistDate;
     private String description;
-//    private String position;
+    private String position;
     private String avatarUrl;
+    private String country;
+    private String city;
+    private String address;
 }

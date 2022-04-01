@@ -6,6 +6,7 @@ import com.management.system.authservice.exception.UserNotFoundException;
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.PasswordUpdateDto;
 import com.management.system.authservice.model.dto.ProfileDto;
+import com.management.system.authservice.model.dto.RegistrationDto;
 import com.management.system.authservice.repository.RoleRepository;
 import com.management.system.authservice.repository.UserRepository;
 import com.management.system.authservice.service.mapper.UserMapper;
@@ -34,15 +35,20 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     @Override
-    public Optional<User> save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getRole() == null) {
-            user.setRole(roleRepository.getByName("USER").orElseThrow(() -> new RoleNotFoundException("Role not found")));
-        }
+    public Optional<User> save(RegistrationDto registrationDto) {
+        User user = User.builder()
+                .password(passwordEncoder.encode(registrationDto.getPassword()))
+                .role(roleRepository.getByName("USER").orElseThrow(() -> new RoleNotFoundException("Role not found")))
+                .build();
 
         ProfileDto profile = ProfileDto.builder()
                 .email(user.getUsername())
-                .fullName(user.getFullName())
+                .fullName(registrationDto.getFullName())
+                .avatarUrl("https://thispersondoesnotexist.com/image")
+                .position("UX/Designer")
+                .country("Germany")
+                .city("Munchen")
+                .address("Nurenber strasse 34 A")
                 .build();
 
         try {
@@ -61,8 +67,6 @@ public class UserServiceImpl implements UserService{
             log.error("PROFILE SAVE ERROR: {}", e.getMessage());
         }
 
-
-//        log.info("RESPONSE: {}", profileDto.getFullName());
         return Optional.of(userRepository.save(user));
     }
 

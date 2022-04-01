@@ -2,13 +2,14 @@ package com.management.system.authservice.service;
 
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.PasswordUpdateDto;
+import com.management.system.authservice.model.dto.RegistrationDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    Optional<User> save(User user);
+    Optional<User> save(RegistrationDto registrationDto);
     void deleteById(Long id);
     void deleteByUser(User user);
     Optional<User> getById(Long id);

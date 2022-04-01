@@ -19,7 +19,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers(HttpMethod.POST, "/api/account").hasAuthority("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

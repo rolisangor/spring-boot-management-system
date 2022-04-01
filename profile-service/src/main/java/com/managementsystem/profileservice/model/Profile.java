@@ -3,6 +3,7 @@ package com.managementsystem.profileservice.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.sql.rowset.serial.SerialStruct;
 
 @Entity
 @Builder
@@ -12,15 +13,15 @@ import javax.persistence.*;
 @Getter
 @ToString
 @Table(name = "profile")
-public class Profile {
+public class Profile extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String email;
     private String fullName;
-    //    private String persistDate;
     private String description;
-    //    private String position;
+    private String position;
     private String avatarUrl;
+    private String country;
+    private String city;
+    private String address;
+    private String about;
 }

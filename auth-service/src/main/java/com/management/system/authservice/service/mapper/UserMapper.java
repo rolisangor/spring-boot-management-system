@@ -24,7 +24,6 @@ public abstract class UserMapper {
     public abstract User toUser(UserDto userDto);
 
     @Mapping(target = "role", ignore = true)
-    @Mapping(target = "id", ignore = true)
     public abstract User toUser(RegistrationDto registrationDto);
 
     @Mapping(target = "role", source = "role.name")

@@ -5,16 +5,20 @@ spring:
   application:
     name: auth-service
 
+  sql:
+    init:
+      mode: always
+
   datasource:
     url: ${DB_HOST:jdbc:postgresql://localhost:5432/ms_auth_service_db}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:root}
 
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate.ddl-auto: create
     properties.hibernate.enable_lazy_load_no_trans: true
-    properties.hibernate.format_sql: true
+    properties.hibernate.format_sql: false
     properties.hibernate.generate_statistics: false
     properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
     properties.hibernate.jdbc.batch_size: 20
@@ -22,8 +26,9 @@ spring:
     properties.hibernate.order_updates: true
     properties.hibernate.jdbc.batch_versioned_data: true
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
+    defer-datasource-initialization: true
 
-### Zipkin
+  ### Zipkin
   zipkin:
     enabled: true
     sender:

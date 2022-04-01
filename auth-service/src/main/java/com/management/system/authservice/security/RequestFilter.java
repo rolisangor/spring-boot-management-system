@@ -16,7 +16,7 @@ public class RequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("FILTER: {}", request.getRemoteHost());
+//        log.info("FILTER_USER_PRINCIPAL_NAME: {}", request.getUserPrincipal().getName());
         filterChain.doFilter(request, response);
     }
 }

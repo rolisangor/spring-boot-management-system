@@ -27,7 +27,7 @@ public class AuthController {
     @PostMapping("/registration")
     public ResponseEntity<UserPrincipalDto> registration(@Valid @RequestBody RegistrationDto registrationDto) {
         log.info("REGISTRATION: save user email: {} and password {}", registrationDto.getUsername(), registrationDto.getPassword());
-        User user = userService.save(userMapper.toUser(registrationDto)).orElseThrow(() -> new UserRegistrationException("Registration failed please contact support operator"));
+        User user = userService.save(registrationDto).orElseThrow(() -> new UserRegistrationException("Registration failed please contact support operator"));
         return ResponseEntity.ok(userMapper.toPrincipal(user));
     }
 

@@ -1,0 +1,8 @@
+insert into role (created_at, modified_at, version, name) values ('2022-04-01 15:50:45.542886', '2022-04-01 15:50:45.542886', 0, 'ADMIN');
+insert into role (created_at, modified_at, version, name) values ('2022-04-01 15:50:45.542886', '2022-04-01 15:50:45.542886', 0, 'USER');
+
+insert into users (created_at, modified_at, version, password, role_id, username) values ('2022-04-01 15:50:45.542886', '2022-04-01 15:50:45.542886', 0, '$2a$10$GUEL86npLoKaDwnhdPUwmu7vicqPvUyzKjtfCq288Eth1OmlwwRu6', 1, 'admin@email.com');
+insert into users (created_at, modified_at, version, password, role_id, username) values ('2022-04-02 15:50:45.542886', '2022-04-02 15:50:45.542886', 0, '$2a$10$GUEL86npLoKaDwnhdPUwmu7vicqPvUyzKjtfCq288Eth1OmlwwRu6', 2, 'user@email.com');
+insert into users (created_at, modified_at, version, password, role_id, username) values ('2022-04-03 15:50:45.542886', '2022-04-03 15:50:45.542886', 0, '$2a$10$GUEL86npLoKaDwnhdPUwmu7vicqPvUyzKjtfCq288Eth1OmlwwRu6', 2, 'LaurenJHungerford@jourrapide.com');
+insert into users (created_at, modified_at, version, password, role_id, username) values ('2022-04-04 15:50:45.542886', '2022-04-04 15:50:45.542886', 0, '$2a$10$GUEL86npLoKaDwnhdPUwmu7vicqPvUyzKjtfCq288Eth1OmlwwRu6', 2, 'NancyPCortes@rhyta.com');
+insert into users (created_at, modified_at, version, password, role_id, username) values ('2022-04-05 15:50:45.542886', '2022-04-05 15:50:45.542886', 0, '$2a$10$GUEL86npLoKaDwnhdPUwmu7vicqPvUyzKjtfCq288Eth1OmlwwRu6', 2, 'DanielMWilliams@rhyta.com');

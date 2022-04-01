@@ -9,4 +9,5 @@ public interface ProfileService {
 
     Optional<Profile> save(Profile profile);
     Optional<Profile> getProfileById(Long id);
+    Optional<Profile> getProfileByEmail(String email);
 }
