@@ -1,5 +1,6 @@
 package com.managementsystem.profileservice.controller;
 
+import com.managementsystem.profileservice.exception.BadRequestParamException;
 import com.managementsystem.profileservice.exception.CreateProfileError;
 import com.managementsystem.profileservice.exception.ProfileNotFoundException;
 import com.managementsystem.profileservice.model.Profile;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/profile/")
@@ -48,4 +50,16 @@ public class ProfileController {
         return ResponseEntity.ok(profileMapper.toProfilePrincipalDto(profile));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllProfiles() {
+        return ResponseEntity.ok(profileService.getAllProfiles());
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<?> getPageableProfile(@RequestParam Optional<String> page, @RequestParam Optional<String> size) {
+        if (page.isEmpty() || size.isEmpty()) {
+            throw new BadRequestParamException("Request parameter page and size are required");
+        }
+        return ResponseEntity.ok(profileService.getPageableProfiles(page.get(), size.get()));
+    }
 }
