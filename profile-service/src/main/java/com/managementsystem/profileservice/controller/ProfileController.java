@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Optional;
 
+import static com.managementsystem.profileservice.controller.ResponseMessage.message;
+
 @RestController
 @RequestMapping("/api/profile/")
 @Slf4j
@@ -62,4 +64,18 @@ public class ProfileController {
         }
         return ResponseEntity.ok(profileService.getPageableProfiles(page.get(), size.get()));
     }
+
+    @PreAuthorize("#oauth2.hasScope('server')")
+    @DeleteMapping("/{email}/")
+    public ResponseEntity<?> deleteProfileById(@PathVariable String email) {
+        profileService.deleteProfileByEmail(email);
+        return ResponseEntity.ok(message("Profile deleted successful"));
+    }
+
+    @PutMapping("/{id}/")
+    public ResponseEntity<?> updateProfile(@PathVariable Long id) {
+        //TODO: add service update class
+        return ResponseEntity.ok("update"); //TODO: return profile class
+    }
+
 }

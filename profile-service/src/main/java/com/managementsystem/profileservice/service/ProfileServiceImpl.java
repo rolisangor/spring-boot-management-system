@@ -5,7 +5,6 @@ import com.managementsystem.profileservice.model.Profile;
 import com.managementsystem.profileservice.repository.ProfileRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,6 +60,12 @@ public class ProfileServiceImpl implements ProfileService{
         }
         Pageable pageable = PageRequest.of(currentPage - 1, currentSize);
         return profileRepository.findAll(pageable).getContent();
+    }
+
+    @Transactional
+    @Override
+    public void deleteProfileByEmail(String email) {
+        profileRepository.getProfileByEmail(email).ifPresent(profile -> profileRepository.deleteById(profile.getId()));
     }
 
 }

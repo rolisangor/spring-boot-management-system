@@ -7,6 +7,7 @@ import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.PasswordUpdateDto;
 import com.management.system.authservice.model.dto.ProfileDto;
 import com.management.system.authservice.model.dto.RegistrationDto;
+import com.management.system.authservice.model.dto.ResponseMessageDto;
 import com.management.system.authservice.repository.RoleRepository;
 import com.management.system.authservice.repository.UserRepository;
 import com.management.system.authservice.service.mapper.UserMapper;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService{
     private final WebClient.Builder webClient;
     private final static String PROFILE_SERVICE_BASE_URL = "http://profile-service/";
     private final static String PROFILE_SERVICE_CREATE_URL = "/api/profile/";
+    private final static String PROFILE_SERVICE_DELETE_URL = "/api/profile/%s/";
 
     @Transactional
     @Override
@@ -44,15 +46,15 @@ public class UserServiceImpl implements UserService{
         ProfileDto profile = ProfileDto.builder()
                 .email(user.getUsername())
                 .fullName(registrationDto.getFullName())
-                .avatarUrl("https://thispersondoesnotexist.com/image")
-                .position("UX/Designer")
-                .country("Germany")
-                .city("Munchen")
-                .address("Nurenber strasse 34 A")
+                .avatarUrl("https://robohash.org/omnisdoloribusquos.png?size=50x50&set=set1")
+                .position("Add position")
+                .country("Add Country")
+                .city("Add City")
+                .address("Add address")
                 .build();
 
         try {
-            ProfileDto profileDto = webClient
+            webClient
                     .baseUrl(PROFILE_SERVICE_BASE_URL).build()
                     .post()
                     .uri(PROFILE_SERVICE_CREATE_URL)
@@ -62,7 +64,7 @@ public class UserServiceImpl implements UserService{
                     .retrieve()
                     .bodyToMono(ProfileDto.class)
                     .block();
-            log.info("PROFILE DTO SAVE SUCCESSFUL");
+            log.info("PROFILE SAVE SUCCESSFUL");
         }catch (Exception e) {
             log.error("PROFILE SAVE ERROR: {}", e.getMessage());
         }
@@ -135,5 +137,23 @@ public class UserServiceImpl implements UserService{
         }
         user.setPassword(passwordEncoder.encode(passwordUpdateDto.getNewPassword()));
         return Optional.of(userRepository.save(user));
+    }
+
+    @Transactional
+    @Override
+    public void deleteUserByEmail(String email) {
+        ResponseMessageDto responseMessageDto = webClient
+                .baseUrl(PROFILE_SERVICE_BASE_URL).build()
+                .delete()
+                .uri(String.format(PROFILE_SERVICE_DELETE_URL, email))
+                .header(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(ResponseMessageDto.class)
+                .block();
+
+        log.info(responseMessageDto.getMessage());
+
+        userRepository.findFirstByUsername(email).ifPresent(user -> userRepository.deleteById(user.getId()));
     }
 }

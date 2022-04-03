@@ -13,4 +13,5 @@ public interface ProfileService {
     Optional<Profile> getProfileByEmail(String email);
     List<Profile> getAllProfiles();
     List<Profile> getPageableProfiles(String page, String size);
+    void deleteProfileByEmail(String email);
 }

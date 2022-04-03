@@ -10,10 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Optional;
+import static com.management.system.authservice.controller.ResponseMessage.message;
 
 @RestController
 @RequestMapping("api/auth")
@@ -53,6 +53,12 @@ public class AuthController {
         User user = userService.updatePassword(passwordUpdateDto, principal.getName())
                         .orElseThrow(() -> new PasswordValidationException("Update password error please contact support operator"));
         return ResponseEntity.ok(userMapper.toUserDto(user));
+    }
+
+    @DeleteMapping("/{email}/")
+    public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) {
+        userService.deleteUserByEmail(email);
+        return ResponseEntity.ok(message("User deleted successful"));
     }
 
 }

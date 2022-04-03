@@ -1,5 +1,6 @@
 package com.management.system.authservice.controller.advice;
 
+import com.management.system.authservice.exception.UserNotFoundException;
 import com.management.system.authservice.exception.UserRegistrationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -66,5 +67,16 @@ public class AdviceController {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .build();
         return new ResponseEntity<>(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({UserNotFoundException.class})
+    public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException exception) {
+        log.error("USER_NOT_FOUND_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
+        ResponseError errorBody = ResponseError.builder()
+                .timestamp(LocalDateTime.now())
+                .message(exception.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .build();
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
 }

@@ -4,6 +4,7 @@ import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.PasswordUpdateDto;
 import com.management.system.authservice.model.dto.RegistrationDto;
 
+import javax.sql.rowset.serial.SerialStruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,5 @@ public interface UserService {
     Optional<User> update(User user);
     Iterable<User> getAll();
     Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto, String username);
+    void deleteUserByEmail(String email);
 }
