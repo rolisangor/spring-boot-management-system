@@ -26,14 +26,12 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<UserPrincipalDto> registration(@Valid @RequestBody RegistrationDto registrationDto) {
-        log.info("REGISTRATION: save user email: {} and password {}", registrationDto.getUsername(), registrationDto.getPassword());
-        User user = userService.save(registrationDto).orElseThrow(() -> new UserRegistrationException("Registration failed please contact support operator"));
+        log.info("REGISTRATION: save user email: {} and password {}",
+                registrationDto.getUsername(),
+                registrationDto.getPassword());
+        User user = userService.save(registrationDto).orElseThrow(() ->
+                new UserRegistrationException("Registration failed please contact support operator"));
         return ResponseEntity.ok(userMapper.toPrincipal(user));
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(Principal principal) {
-        return ResponseEntity.ok("logout success");
     }
 
     @GetMapping("/principal")
@@ -50,8 +48,8 @@ public class AuthController {
 
     @PutMapping("/password-update")
     public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto passwordUpdateDto, Principal principal) {
-        User user = userService.updatePassword(passwordUpdateDto, principal.getName())
-                        .orElseThrow(() -> new PasswordValidationException("Update password error please contact support operator"));
+        User user = userService.updatePassword(passwordUpdateDto, principal.getName()).orElseThrow(() ->
+                new PasswordValidationException("Update password error please contact support operator"));
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 

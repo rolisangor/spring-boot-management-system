@@ -4,8 +4,8 @@ import com.managementsystem.profileservice.exception.BadRequestParamException;
 import com.managementsystem.profileservice.exception.ProfileNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -15,35 +15,30 @@ import java.time.LocalDateTime;
 public class ControllerAdvice {
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<?> handleAllExceptions(Exception exception) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseError handleProfileNotFoundException(Exception exception) {
         log.error("ALL_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
-        ResponseError errorBody = ResponseError.builder()
-                .timestamp(LocalDateTime.now())
-                .message(exception.getMessage())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .build();
-        return new ResponseEntity<>(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        return getErrorBody(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ProfileNotFoundException.class})
-    public ResponseEntity<?> handleProfileNotFoundException(ProfileNotFoundException exception) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseError handleProfileNotFoundException(ProfileNotFoundException exception) {
         log.error("PROFILE_NOT_FOUND_HANDLE_MESSAGE: {}", exception.getMessage());
-        ResponseError errorBody = ResponseError.builder()
-                .timestamp(LocalDateTime.now())
-                .message(exception.getMessage())
-                .status(HttpStatus.NOT_FOUND.value())
-                .build();
-        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
+        return getErrorBody(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({BadRequestParamException.class})
-    public ResponseEntity<?> handleBadRequestParamException(BadRequestParamException exception) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError handleInternalServiceException(BadRequestParamException exception) {
         log.error("BAD_REQUEST_PARAM_HANDLE_MESSAGE: {}", exception.getMessage());
-        ResponseError errorBody = ResponseError.builder()
+        return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseError getErrorBody(String message, HttpStatus status) {
+        return ResponseError.builder()
                 .timestamp(LocalDateTime.now())
-                .message(exception.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .build();
-        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
+                .message(message)
+                .status(status.value()).build();
     }
 }

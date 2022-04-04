@@ -18,7 +18,6 @@ public interface UserService {
     boolean existById(Long id);
     boolean existByUsername(String username);
     Optional<User> update(User user);
-    Iterable<User> getAll();
     Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto, String username);
     void deleteUserByEmail(String email);
 }

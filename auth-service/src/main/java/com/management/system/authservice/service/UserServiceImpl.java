@@ -1,8 +1,6 @@
 package com.management.system.authservice.service;
 
-import com.management.system.authservice.exception.PasswordValidationException;
-import com.management.system.authservice.exception.RoleNotFoundException;
-import com.management.system.authservice.exception.UserNotFoundException;
+import com.management.system.authservice.exception.*;
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.PasswordUpdateDto;
 import com.management.system.authservice.model.dto.ProfileDto;
@@ -10,7 +8,6 @@ import com.management.system.authservice.model.dto.RegistrationDto;
 import com.management.system.authservice.model.dto.ResponseMessageDto;
 import com.management.system.authservice.repository.RoleRepository;
 import com.management.system.authservice.repository.UserRepository;
-import com.management.system.authservice.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -25,7 +22,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -53,21 +50,17 @@ public class UserServiceImpl implements UserService{
                 .address("Add address")
                 .build();
 
-        try {
-            webClient
-                    .baseUrl(PROFILE_SERVICE_BASE_URL).build()
-                    .post()
-                    .uri(PROFILE_SERVICE_CREATE_URL)
-                    .header(MediaType.APPLICATION_JSON_VALUE)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .body(Mono.just(profile), ProfileDto.class)
-                    .retrieve()
-                    .bodyToMono(ProfileDto.class)
-                    .block();
-            log.info("PROFILE SAVE SUCCESSFUL");
-        }catch (Exception e) {
-            log.error("PROFILE SAVE ERROR: {}", e.getMessage());
-        }
+        webClient
+                .baseUrl(PROFILE_SERVICE_BASE_URL).build()
+                .post()
+                .uri(PROFILE_SERVICE_CREATE_URL)
+                .header(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(profile), ProfileDto.class)
+                .retrieve()
+                .bodyToMono(ProfileDto.class)
+                .onErrorMap(throwable -> new InternalServiceException("Profile service request failed"))
+                .block();
 
         return Optional.of(userRepository.save(user));
     }
@@ -119,12 +112,6 @@ public class UserServiceImpl implements UserService{
         return Optional.of(userRepository.save(current));
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Iterable<User> getAll() {
-        return userRepository.findAll();
-    }
-
     @Transactional
     @Override
     public Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto, String username) {
@@ -142,18 +129,20 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public void deleteUserByEmail(String email) {
-        ResponseMessageDto responseMessageDto = webClient
+        webClient
                 .baseUrl(PROFILE_SERVICE_BASE_URL).build()
                 .delete()
                 .uri(String.format(PROFILE_SERVICE_DELETE_URL, email))
                 .header(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
+//                .onStatus(HttpStatus::is4xxClientError, error ->
+//                        Mono.error(new BadRequestException("Profile response failed")))
+//                .onStatus(HttpStatus::is5xxServerError, error ->
+//                        Mono.error(new InternalServiceException("Profile service request failed")))
                 .bodyToMono(ResponseMessageDto.class)
+                .onErrorMap(throwable -> new InternalServiceException("Profile service request failed"))
                 .block();
-
-        log.info(responseMessageDto.getMessage());
-
         userRepository.findFirstByUsername(email).ifPresent(user -> userRepository.deleteById(user.getId()));
     }
 }
