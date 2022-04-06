@@ -3,7 +3,6 @@ rootProject.name = 'spring-boot-management-system'
 include(
         "discovery-service",
         "gateway-service",
-        "account-service",
         "balance-service",
         "auth-service",
         "profile-service"
