@@ -3,7 +3,6 @@ package com.managementsystem.profileservice.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.sql.rowset.serial.SerialStruct;
 
 @Entity
 @Builder
@@ -15,6 +14,8 @@ import javax.sql.rowset.serial.SerialStruct;
 @Table(name = "profile")
 public class Profile extends BaseEntity{
 
+    @Id
+    protected Long id;
     private String email;
     private String fullName;
     private String description;

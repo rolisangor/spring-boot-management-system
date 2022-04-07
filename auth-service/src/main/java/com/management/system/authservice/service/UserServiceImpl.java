@@ -34,20 +34,20 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Optional<User> save(RegistrationDto registrationDto) {
+    public User save(RegistrationDto registrationDto) {
         User user = User.builder()
                 .password(passwordEncoder.encode(registrationDto.getPassword()))
+                .username(registrationDto.getUsername())
                 .role(roleRepository.getByName("USER").orElseThrow(() -> new RoleNotFoundException("Role not found")))
                 .build();
 
+        User currentUser = userRepository.save(user);
+        log.info("AUTH_SERVICE_SAVE: {}", user);
         ProfileDto profile = ProfileDto.builder()
+                .id(user.getId())
                 .email(user.getUsername())
                 .fullName(registrationDto.getFullName())
                 .avatarUrl("https://robohash.org/omnisdoloribusquos.png?size=50x50&set=set1")
-                .position("Add position")
-                .country("Add Country")
-                .city("Add City")
-                .address("Add address")
                 .build();
 
         webClient
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
                 .onErrorMap(throwable -> new InternalServiceException("Profile service request failed"))
                 .block();
 
-        return Optional.of(userRepository.save(user));
+        return currentUser;
     }
 
     @Transactional
@@ -114,13 +114,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto, String username) {
-        User user = getByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
-        if (!passwordEncoder.matches(passwordUpdateDto.getCurrentPassword(), user.getPassword())) {
+    public Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto) {
+        User user = getByUsername(passwordUpdateDto.getUsername()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        if (!passwordEncoder.matches(passwordUpdateDto.getOldPassword(), user.getPassword())) {
             throw new PasswordValidationException("Old password is not correct");
         }
-        if (!passwordUpdateDto.getNewPassword().equals(passwordUpdateDto.getRepeatNewPassword())) {
-            throw new PasswordValidationException("New password and repeat password must be equals");
+        if (!passwordUpdateDto.getNewPassword().equals(passwordUpdateDto.getRepeatPassword())) {
+            throw new PasswordValidationException("New password and repeat password must be the same");
         }
         user.setPassword(passwordEncoder.encode(passwordUpdateDto.getNewPassword()));
         return Optional.of(userRepository.save(user));

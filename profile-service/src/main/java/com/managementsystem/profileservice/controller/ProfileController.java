@@ -31,6 +31,7 @@ public class ProfileController {
     @PreAuthorize("#oauth2.hasScope('server')")
     public ResponseEntity<?> create(@RequestBody ProfileDto profileDto) {
         log.info("PROFILE_CONTROLLER_CREATE_FULL_NAME: {}", profileDto.getFullName());
+        log.info("PROFILE_CONTROLLER_CREATE_ID: {}", profileDto.getId());
         Profile profile = profileService.save(
                 profileMapper.toProfile(profileDto)).orElseThrow(() -> new CreateProfileError("Error create profile"));
         return ResponseEntity.ok(profileMapper.toProfileDto(profile));
@@ -58,7 +59,8 @@ public class ProfileController {
     }
 
     @GetMapping("/pageable")
-    public ResponseEntity<?> getPageableProfile(@RequestParam Optional<String> page, @RequestParam Optional<String> size) {
+    public ResponseEntity<?> getPageableProfile(
+            @RequestParam Optional<String> page, @RequestParam Optional<String> size) {
         if (page.isEmpty() || size.isEmpty()) {
             throw new BadRequestParamException("Request parameter page and size are required");
         }
@@ -66,16 +68,40 @@ public class ProfileController {
     }
 
     @PreAuthorize("#oauth2.hasScope('server')")
-    @DeleteMapping("/{email}/")
-    public ResponseEntity<?> deleteProfileById(@PathVariable String email) {
-        profileService.deleteProfileByEmail(email);
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<?> deleteProfileById(@PathVariable Long id) {
+        profileService.deleteProfileById(id);
         return ResponseEntity.ok(message("Profile deleted successful"));
     }
 
-    @PutMapping("/{id}/")
-    public ResponseEntity<?> updateProfile(@PathVariable Long id) {
-        //TODO: add service update class
-        return ResponseEntity.ok("update"); //TODO: return profile class
+    @GetMapping("/id/{id}/")
+    public ResponseEntity<?> getProfileById(@PathVariable Long id) {
+        Profile profile = profileService.getProfileById(id).orElseThrow(() ->
+                new ProfileNotFoundException("profile not found"));
+        return ResponseEntity.ok(profileMapper.toProfileDto(profile));
     }
+
+//    //TODO: delete this method after refactor UI
+//    @PreAuthorize("#oauth2.hasScope('server')")
+//    @DeleteMapping("/{email}/")
+//    public ResponseEntity<?> deleteProfileByEmail(@PathVariable String email) {
+//        profileService.deleteProfileByEmail(email);
+//        return ResponseEntity.ok(message("Profile deleted successful"));
+//    }
+//
+//    //TODO: delete this method after refactor UI
+//    @GetMapping("/email/{email}/")
+//    public ResponseEntity<?> getProfileByEmail(@PathVariable String email) {
+//        Profile profile = profileService.getProfileByEmail(email).orElseThrow(() ->
+//                new ProfileNotFoundException("profile not found"));
+//        return ResponseEntity.ok(profileMapper.toProfileDto(profile));
+//    }
+//
+//    //TODO: delete this method after refactor UI
+//    @PutMapping("/email/{email}/")
+//    public ResponseEntity<?> updateProfile(@PathVariable String email) {
+//        //TODO: add service update class
+//        return ResponseEntity.ok(message("updated successful")); //TODO: return profile class
+//    }
 
 }

@@ -23,13 +23,14 @@ public class ProfileServiceImpl implements ProfileService{
     @Transactional
     @Override
     public Optional<Profile> save(Profile profile) {
+        log.info("PROFILE_SERVICE_SAVE: {}", profile);
         return Optional.of(profileRepository.save(profile));
     }
 
     @Transactional(readOnly = true)
     @Override
     public Optional<Profile> getProfileById(Long id) {
-        return Optional.empty();
+        return profileRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
@@ -62,10 +63,16 @@ public class ProfileServiceImpl implements ProfileService{
         return profileRepository.findAll(pageable).getContent();
     }
 
+    //TODO: delete this method after refactor UI
     @Transactional
     @Override
     public void deleteProfileByEmail(String email) {
         profileRepository.getProfileByEmail(email).ifPresent(profile -> profileRepository.deleteById(profile.getId()));
+    }
+
+    @Override
+    public void deleteProfileById(Long id) {
+        profileRepository.findById(id).ifPresent(profile -> profileRepository.deleteById(profile.getId()));
     }
 
 }

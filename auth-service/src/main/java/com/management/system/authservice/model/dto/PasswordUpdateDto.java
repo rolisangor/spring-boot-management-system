@@ -10,7 +10,8 @@ import lombok.*;
 @Builder
 public class PasswordUpdateDto {
 
-    private String currentPassword;
+    private String username;
+    private String oldPassword;
     private String newPassword;
-    private String repeatNewPassword;
+    private String repeatPassword;
 }

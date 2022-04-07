@@ -1,6 +1,7 @@
 package com.management.system.authservice.controller;
 
 import com.management.system.authservice.exception.PasswordValidationException;
+import com.management.system.authservice.exception.UserNotFoundException;
 import com.management.system.authservice.exception.UserRegistrationException;
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.*;
@@ -29,8 +30,7 @@ public class AuthController {
         log.info("REGISTRATION: save user email: {} and password {}",
                 registrationDto.getUsername(),
                 registrationDto.getPassword());
-        User user = userService.save(registrationDto).orElseThrow(() ->
-                new UserRegistrationException("Registration failed please contact support operator"));
+        User user = userService.save(registrationDto);
         return ResponseEntity.ok(userMapper.toPrincipal(user));
     }
 
@@ -47,8 +47,9 @@ public class AuthController {
     }
 
     @PutMapping("/password-update")
-    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto passwordUpdateDto, Principal principal) {
-        User user = userService.updatePassword(passwordUpdateDto, principal.getName()).orElseThrow(() ->
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto passwordUpdateDto) {
+        log.info(passwordUpdateDto.toString());
+        User user = userService.updatePassword(passwordUpdateDto).orElseThrow(() ->
                 new PasswordValidationException("Update password error please contact support operator"));
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
@@ -57,6 +58,12 @@ public class AuthController {
     public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) {
         userService.deleteUserByEmail(email);
         return ResponseEntity.ok(message("User deleted successful"));
+    }
+
+    @GetMapping("/email/{email}/")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        User user = userService.getByUsername(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
 }

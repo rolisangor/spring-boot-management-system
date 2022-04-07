@@ -1,13 +1,9 @@
 package com.management.system.authservice.controller.advice;
 
-import com.management.system.authservice.exception.InternalServiceException;
-import com.management.system.authservice.exception.RoleNotFoundException;
-import com.management.system.authservice.exception.UserNotFoundException;
-import com.management.system.authservice.exception.UserRegistrationException;
+import com.management.system.authservice.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -75,6 +71,13 @@ public class AdviceController {
     public ResponseError handleInternalServiceException(InternalServiceException exception) {
         log.error("INTERNAL_SERVICE_HANDLE_MESSAGE: {}", exception.getMessage());
         return getErrorBody(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({PasswordValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError handlePasswordValidationException(PasswordValidationException exception) {
+        log.error("PASSWORD_VALIDATION_HANDLE_MESSAGE: {}", exception.getMessage());
+        return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     private ResponseError getErrorBody(String message, HttpStatus status) {

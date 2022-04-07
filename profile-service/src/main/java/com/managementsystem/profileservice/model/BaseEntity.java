@@ -14,10 +14,6 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
-
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     protected Instant createdAt;

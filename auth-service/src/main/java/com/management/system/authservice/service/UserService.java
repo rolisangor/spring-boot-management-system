@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    Optional<User> save(RegistrationDto registrationDto);
+    User save(RegistrationDto registrationDto);
     void deleteById(Long id);
     void deleteByUser(User user);
     Optional<User> getById(Long id);
@@ -18,6 +18,6 @@ public interface UserService {
     boolean existById(Long id);
     boolean existByUsername(String username);
     Optional<User> update(User user);
-    Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto, String username);
+    Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto);
     void deleteUserByEmail(String email);
 }
