@@ -12,9 +12,5 @@ public interface ProfileService {
     Optional<Profile> getProfileByEmail(String email);
     List<Profile> getAllProfiles();
     List<Profile> getPageableProfiles(String page, String size);
-
-    //TODO: delete this method after refactor UI
-    void deleteProfileByEmail(String email);
-
     void deleteProfileById(Long id);
 }

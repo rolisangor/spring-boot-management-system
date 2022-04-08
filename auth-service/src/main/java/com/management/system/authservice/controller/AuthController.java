@@ -2,7 +2,6 @@ package com.management.system.authservice.controller;
 
 import com.management.system.authservice.exception.PasswordValidationException;
 import com.management.system.authservice.exception.UserNotFoundException;
-import com.management.system.authservice.exception.UserRegistrationException;
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.*;
 import com.management.system.authservice.service.UserService;
@@ -17,7 +16,7 @@ import java.util.Optional;
 import static com.management.system.authservice.controller.ResponseMessage.message;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("api/auth/")
 @AllArgsConstructor
 @Slf4j
 public class AuthController {
@@ -54,15 +53,15 @@ public class AuthController {
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
-    @DeleteMapping("/{email}/")
-    public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) {
-        userService.deleteUserByEmail(email);
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+        userService.deleteById(id);
         return ResponseEntity.ok(message("User deleted successful"));
     }
 
-    @GetMapping("/email/{email}/")
-    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
-        User user = userService.getByUsername(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+    @GetMapping("/id/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        User user = userService.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 

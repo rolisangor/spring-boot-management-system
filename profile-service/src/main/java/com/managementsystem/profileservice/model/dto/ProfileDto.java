@@ -13,7 +13,7 @@ import java.time.Instant;
 public class ProfileDto {
 
     private Long id;
-    private String email;
+    private String email; //TODO delete email from profile
     private String fullName;
     private String description;
     private String position;

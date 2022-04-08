@@ -33,6 +33,7 @@ public class ProfileServiceImpl implements ProfileService{
         return profileRepository.findById(id);
     }
 
+    //TODO: deleete method after refactor UI
     @Transactional(readOnly = true)
     @Override
     public Optional<Profile> getProfileByEmail(String email) {
@@ -63,16 +64,8 @@ public class ProfileServiceImpl implements ProfileService{
         return profileRepository.findAll(pageable).getContent();
     }
 
-    //TODO: delete this method after refactor UI
-    @Transactional
-    @Override
-    public void deleteProfileByEmail(String email) {
-        profileRepository.getProfileByEmail(email).ifPresent(profile -> profileRepository.deleteById(profile.getId()));
-    }
-
     @Override
     public void deleteProfileById(Long id) {
         profileRepository.findById(id).ifPresent(profile -> profileRepository.deleteById(profile.getId()));
     }
-
 }

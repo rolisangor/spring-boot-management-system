@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfilePrincipalDto {
+public class ProfilePrincipalDto { //TODO delete this class after refactor UI
 
     private String fullName;
     private String position;

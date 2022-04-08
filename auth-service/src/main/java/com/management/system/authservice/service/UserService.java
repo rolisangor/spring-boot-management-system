@@ -13,11 +13,11 @@ public interface UserService {
     User save(RegistrationDto registrationDto);
     void deleteById(Long id);
     void deleteByUser(User user);
-    Optional<User> getById(Long id);
+    Optional<User> findById(Long id);
     Optional<User> getByUsername(String username);
     boolean existById(Long id);
     boolean existByUsername(String username);
     Optional<User> update(User user);
     Optional<User> updatePassword(PasswordUpdateDto passwordUpdateDto);
-    void deleteUserByEmail(String email);
+//    void deleteUserByEmail(String email);
 }

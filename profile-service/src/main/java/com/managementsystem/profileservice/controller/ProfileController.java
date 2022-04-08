@@ -37,23 +37,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileMapper.toProfileDto(profile));
     }
 
-    @GetMapping()
-    public ResponseEntity<?> getProfile(Principal principal) {
-        log.info("PROFILE_CONTROLLER_GET_PROFILE_PRINCIPAL_NAME: {}", principal.getName());
-        Profile profile = profileService.getProfileByEmail(principal.getName()).orElseThrow(() ->
-                new ProfileNotFoundException("Profile not found please contact support operator"));
-        return ResponseEntity.ok(profileMapper.toProfileDto(profile));
-    }
-
-    @GetMapping("/principal")
-    public ResponseEntity<?> getProfilePrincipal(Principal principal) {
-        log.info("PROFILE_CONTROLLER_GET_PROFILE_PRINCIPAL_NAME: {}", principal.getName());
-        Profile profile = profileService.getProfileByEmail(principal.getName()).orElseThrow(() ->
-                new ProfileNotFoundException("Profile not found please contact support operator"));
-        return ResponseEntity.ok(profileMapper.toProfilePrincipalDto(profile));
-    }
-
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAllProfiles() {
         return ResponseEntity.ok(profileService.getAllProfiles());
     }
@@ -68,40 +52,17 @@ public class ProfileController {
     }
 
     @PreAuthorize("#oauth2.hasScope('server')")
-    @DeleteMapping("/{id}/")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteProfileById(@PathVariable Long id) {
         profileService.deleteProfileById(id);
         return ResponseEntity.ok(message("Profile deleted successful"));
     }
 
-    @GetMapping("/id/{id}/")
+    @GetMapping("/id/{id}")
     public ResponseEntity<?> getProfileById(@PathVariable Long id) {
         Profile profile = profileService.getProfileById(id).orElseThrow(() ->
                 new ProfileNotFoundException("profile not found"));
         return ResponseEntity.ok(profileMapper.toProfileDto(profile));
     }
-
-//    //TODO: delete this method after refactor UI
-//    @PreAuthorize("#oauth2.hasScope('server')")
-//    @DeleteMapping("/{email}/")
-//    public ResponseEntity<?> deleteProfileByEmail(@PathVariable String email) {
-//        profileService.deleteProfileByEmail(email);
-//        return ResponseEntity.ok(message("Profile deleted successful"));
-//    }
-//
-//    //TODO: delete this method after refactor UI
-//    @GetMapping("/email/{email}/")
-//    public ResponseEntity<?> getProfileByEmail(@PathVariable String email) {
-//        Profile profile = profileService.getProfileByEmail(email).orElseThrow(() ->
-//                new ProfileNotFoundException("profile not found"));
-//        return ResponseEntity.ok(profileMapper.toProfileDto(profile));
-//    }
-//
-//    //TODO: delete this method after refactor UI
-//    @PutMapping("/email/{email}/")
-//    public ResponseEntity<?> updateProfile(@PathVariable String email) {
-//        //TODO: add service update class
-//        return ResponseEntity.ok(message("updated successful")); //TODO: return profile class
-//    }
 
 }

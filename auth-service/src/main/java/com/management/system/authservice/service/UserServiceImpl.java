@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final WebClient.Builder webClient;
     private final static String PROFILE_SERVICE_BASE_URL = "http://profile-service/";
     private final static String PROFILE_SERVICE_CREATE_URL = "/api/profile/";
-    private final static String PROFILE_SERVICE_DELETE_URL = "/api/profile/%s/";
+    private final static String PROFILE_SERVICE_DELETE_BY_ID_URL = "/api/profile/%s";
 
     @Transactional
     @Override
@@ -68,7 +68,23 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+        log.info("AUTH_SERVICE_DELETE_BY_ID: {}", id);
+        webClient
+                .baseUrl(PROFILE_SERVICE_BASE_URL).build()
+                .delete()
+                .uri(String.format(PROFILE_SERVICE_DELETE_BY_ID_URL, id))
+                .header(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+//                .onStatus(HttpStatus::is4xxClientError, error ->
+//                        Mono.error(new BadRequestException("Profile response failed")))
+//                .onStatus(HttpStatus::is5xxServerError, error ->
+//                        Mono.error(new InternalServiceException("Profile service request failed")))
+                .bodyToMono(ResponseMessageDto.class)
+                .onErrorMap(throwable -> new InternalServiceException("Profile service request failed"))
+                .block();
+
+        userRepository.findById(id).ifPresent(user -> userRepository.deleteById(user.getId()));
     }
 
     @Transactional
@@ -79,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<User> getById(Long id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -124,25 +140,5 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(passwordEncoder.encode(passwordUpdateDto.getNewPassword()));
         return Optional.of(userRepository.save(user));
-    }
-
-    @Transactional
-    @Override
-    public void deleteUserByEmail(String email) {
-        webClient
-                .baseUrl(PROFILE_SERVICE_BASE_URL).build()
-                .delete()
-                .uri(String.format(PROFILE_SERVICE_DELETE_URL, email))
-                .header(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-//                .onStatus(HttpStatus::is4xxClientError, error ->
-//                        Mono.error(new BadRequestException("Profile response failed")))
-//                .onStatus(HttpStatus::is5xxServerError, error ->
-//                        Mono.error(new InternalServiceException("Profile service request failed")))
-                .bodyToMono(ResponseMessageDto.class)
-                .onErrorMap(throwable -> new InternalServiceException("Profile service request failed"))
-                .block();
-        userRepository.findFirstByUsername(email).ifPresent(user -> userRepository.deleteById(user.getId()));
     }
 }
