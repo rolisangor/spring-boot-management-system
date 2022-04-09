@@ -1,4 +1,4 @@
-package com.managementsystem.profileservice.controller;
+package com.managementsystem.profileservice.controller.response;
 
 import lombok.*;
 

@@ -2,6 +2,8 @@ package com.management.system.authservice.model.dto;
 
 import lombok.*;
 
+import java.util.UUID;
+
 @Builder
 @Getter
 @Setter
@@ -10,13 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ProfileDto {
 
-    private Long id;
-    private String email;
+    private UUID uuid;
     private String fullName;
-    private String description;
-    private String position;
-    private String avatarUrl;
-    private String country;
-    private String city;
-    private String address;
+    private String email;
 }

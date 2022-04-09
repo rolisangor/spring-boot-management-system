@@ -3,6 +3,7 @@ package com.management.system.authservice.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -14,7 +15,13 @@ import javax.persistence.*;
 @Table(name = "users")
 public class User extends BaseEntity{
 
-    private String username; //TODO: add unique field
+    @Column(unique = true, nullable = false, updatable = false)
+    private UUID uuid;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = CascadeType.REFRESH)

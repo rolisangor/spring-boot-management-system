@@ -3,6 +3,7 @@ package com.managementsystem.profileservice.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -14,10 +15,15 @@ import javax.persistence.*;
 @Table(name = "profile")
 public class Profile extends BaseEntity{
 
-    @Id
-    protected Long id;
-    private String email; //TODO: delete email from profile
+    @Column(unique = true, nullable = false)
+    private UUID uuid;
+
+    @Column(nullable = false)
     private String fullName;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
     private String description;
     private String position;
     private String avatarUrl;

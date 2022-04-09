@@ -41,7 +41,7 @@ public class AdviceController {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseError handleAllExceptions(Exception exception) {
-        log.error("ALL_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
+        log.error("DEFAULT_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
         return getErrorBody(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -77,6 +77,13 @@ public class AdviceController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseError handlePasswordValidationException(PasswordValidationException exception) {
         log.error("PASSWORD_VALIDATION_HANDLE_MESSAGE: {}", exception.getMessage());
+        return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({BadRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError handleBadRequestException(BadRequestException exception) {
+        log.error("BAD_REQUEST_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
         return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

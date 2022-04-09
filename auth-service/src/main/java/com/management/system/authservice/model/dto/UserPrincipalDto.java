@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UserPrincipalDto {
+public class UserPrincipalDto { //TODO delete after refactor controller and ui
 
     private Long id;
     private String username;

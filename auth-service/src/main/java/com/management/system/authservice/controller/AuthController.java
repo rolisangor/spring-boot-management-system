@@ -1,6 +1,6 @@
 package com.management.system.authservice.controller;
 
-import com.management.system.authservice.exception.PasswordValidationException;
+import com.management.system.authservice.exception.InternalServiceException;
 import com.management.system.authservice.exception.UserNotFoundException;
 import com.management.system.authservice.model.User;
 import com.management.system.authservice.model.dto.*;
@@ -12,7 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Optional;
+import java.util.UUID;
+
 import static com.management.system.authservice.controller.ResponseMessage.message;
 
 @RestController
@@ -26,42 +27,42 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<UserPrincipalDto> registration(@Valid @RequestBody RegistrationDto registrationDto) {
-        log.info("REGISTRATION: save user email: {} and password {}",
-                registrationDto.getUsername(),
-                registrationDto.getPassword());
+        log.info("CONTROLLER_REGISTRATION_USER_EMAIL: {}", registrationDto.getUsername());
         User user = userService.save(registrationDto);
         return ResponseEntity.ok(userMapper.toPrincipal(user));
     }
 
     @GetMapping("/principal")
     public ResponseEntity<?> principal(Principal principal) {
-        User user = userService.getByUsername(principal.getName()).orElseThrow();
-        return ResponseEntity.ok(userMapper.toPrincipal(user));
+        User user = userService.getByUsername(principal.getName()).orElseThrow(() ->
+                new UserNotFoundException("User not found"));
+        return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UserDto userDto) {
-        Optional<User> user = userService.update(userMapper.toUser(userDto));
-        return ResponseEntity.ok(userMapper.toUserDto(user.orElseThrow()));
+        User user = userService.update(userDto).orElseThrow(() ->
+                new InternalServiceException("User update failed please contact support operator"));
+        return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
     @PutMapping("/password-update")
     public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto passwordUpdateDto) {
-        log.info(passwordUpdateDto.toString());
         User user = userService.updatePassword(passwordUpdateDto).orElseThrow(() ->
-                new PasswordValidationException("Update password error please contact support operator"));
+                new InternalServiceException("User update password failed please contact support operator"));
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
-    @DeleteMapping("/id/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-        userService.deleteById(id);
+    @DeleteMapping("/id/{uuid}")
+    public ResponseEntity<?> deleteUserByUUID(@PathVariable UUID uuid) {
+        log.info("CONTROLLER_DELETE_UUID: {}", uuid);
+        userService.deleteByUuid(uuid);
         return ResponseEntity.ok(message("User deleted successful"));
     }
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        User user = userService.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+    @GetMapping("/id/{uuid}")
+    public ResponseEntity<?> getUserByUUID(@PathVariable UUID uuid) {
+        User user = userService.findByUuid(uuid).orElseThrow(() -> new UserNotFoundException("User not found"));
         return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
